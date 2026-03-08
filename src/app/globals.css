@@ -1,0 +1,205 @@
+@import "tailwindcss";
+
+@theme {
+  --color-gold-50: #fffaf0;
+  --color-gold-100: #fef3c7;
+  --color-gold-200: #fde68a;
+  --color-gold-300: #fcd34d;
+  --color-gold-400: #fbbf24;
+  --color-gold-500: #f59e0b;
+  --color-gold-600: #d97706;
+  --color-gold-700: #b45309;
+  --color-gold-800: #92400e;
+  --color-gold-900: #78350f;
+}
+
+:root {
+  --background: #000000;
+  --foreground: #ffffff;
+
+  --glass-bg: rgba(20, 20, 20, 0.8);
+  --glass-border: rgba(212, 175, 55, 0.2);
+
+  /* Premium Gold Colors */
+  --premium-gold: #D4AF37;
+  --premium-gold-light: #F4C430;
+  --premium-gold-dark: #B8860B;
+  --gold-glow: rgba(212, 175, 55, 0.3);
+  --ui-bg: #111111;
+  --panel-bg: rgba(26, 26, 26, 0.8);
+  --preview-bg: #222222;
+
+  --gradient-gold: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);
+  --gradient-premium: linear-gradient(135deg, #D4AF37 0%, #C5A028 50%, #B8860B 100%);
+  --gradient-dark: linear-gradient(180deg, #121212 0%, #000000 100%);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), "Inter", system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Glassmorphism */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-card {
+  background: rgba(20, 20, 20, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(212, 175, 55, 0.1);
+  border-radius: 1rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(212, 175, 55, 0.3);
+  box-shadow: 0 8px 40px rgba(212, 175, 55, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Gold Text Gradient */
+.text-gold-gradient {
+  background: var(--gradient-gold);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Split Layout */
+.editor-layout {
+  display: flex;
+  height: calc(100vh - 4rem);
+  overflow: hidden;
+  background-color: #000000;
+}
+
+.editor-form-panel {
+  width: 40%;
+  min-width: 400px;
+  overflow-y: auto;
+  border-right: 1px solid rgba(212, 175, 55, 0.1);
+  background-color: #050505;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212, 175, 55, 0.2) transparent;
+}
+
+.editor-preview-panel {
+  flex: 1;
+  overflow-y: auto;
+  background-color: #000000;
+  background-image: radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.05) 0%, transparent 80%);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212, 175, 55, 0.2) transparent;
+}
+
+/* Gold Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 175, 55, 0.4);
+}
+
+/* Gold Buttons */
+.btn-gold {
+  background: var(--gradient-premium);
+  color: #000000;
+  font-weight: 700;
+  border: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+}
+
+.btn-gold:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+  filter: brightness(1.1);
+}
+
+.btn-gold:active {
+  transform: translateY(0);
+}
+
+/* Animations */
+@keyframes gold-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(212, 175, 55, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0);
+  }
+}
+
+.animate-gold-pulse {
+  animation: gold-pulse 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background-size: 200% 100%;
+  animation: shimmer 3s linear infinite;
+}
+
+/* Custom Checkbox/Radio styling for Gold */
+input[type="checkbox"]:checked {
+  background-color: var(--color-premium-gold);
+  border-color: var(--color-premium-gold);
+}
+
+/* Loading Spinner Gold */
+.spinner-gold {
+  border: 2px solid rgba(212, 175, 55, 0.1);
+  border-top: 2px solid var(--color-premium-gold);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Layout Utilities */
+.editor-container {
+  max-width: 1600px;
+  margin: 0 auto;
+}
