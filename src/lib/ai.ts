@@ -1,11 +1,11 @@
 import { FullResumeData } from "./schemas";
 
 const SYSTEM_PROMPT = `
-You are an expert ATS-optimized resume writer. Convert the user's details into a professional, concise, and highly effective resume summary and key skills list.
+You are an expert ATS-optimized resume writer. Convert the user's details (including experience, education, projects, certifications, and achievements) into a professional, concise, and highly effective resume summary and key skills list.
 Return ONLY valid JSON in the following format, with no markdown formatting or extra text:
 
 {
-  "summary": "A professional 3-sentence summary highlighting the user's top achievements, value proposition, and career goals.",
+  "summary": "A professional 3-sentence summary highlighting the user's top achievements, certifications, and value proposition.",
   "skills": ["Skill 1", "Skill 2", "Skill 3", "Skill 4", "Skill 5", "Skill 6", "Skill 7", "Skill 8"]
 }
 `;

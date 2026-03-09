@@ -1,5 +1,5 @@
 import { FullResumeData } from "@/lib/schemas";
-import { LucideIcon, Mail, Phone, MapPin, ExternalLink, FileText, Sparkles, Briefcase, GraduationCap, Layout } from "lucide-react";
+import { LucideIcon, Mail, Phone, MapPin, ExternalLink, FileText, Sparkles, Briefcase, GraduationCap, Layout, Award, Trophy } from "lucide-react";
 import { ElementType, memo } from "react";
 
 import { getTemplateById, TemplateColors, LayoutType } from "@/lib/templates";
@@ -183,6 +183,47 @@ const EducationBlock = ({ data, colors, fontStyle, baseFontSize, light }: Shared
     );
 };
 
+const CertificationsBlock = ({ data, colors, fontStyle, baseFontSize, light }: SharedProps & { light?: boolean }) => {
+    if (!data.certifications?.certifications || data.certifications.certifications.length === 0) return null;
+    const textColor = light ? (colors.sidebarText || "#fff") : colors.bodyText;
+    const subColor = light ? "rgba(255,255,255,0.6)" : colors.subText;
+    return (
+        <section>
+            <Heading fieldKey="certifications" icon={Award} colors={colors} data={data} light={light}>Certifications</Heading>
+            <div className="space-y-3">
+                {data.certifications.certifications.map((cert, i) => (
+                    <div key={i}>
+                        <Field data={data} fontStyle={fontStyle} baseFontSize={baseFontSize} value={cert.name} fieldKey={`cert_name_${i}`} defaults={{ size: 10, weight: "800", color: textColor }} className="block uppercase" />
+                        <div className="flex justify-between items-center mt-0.5 font-bold uppercase tracking-widest" style={{ fontSize: '8px', color: subColor }}>
+                            <span>{cert.issuer}</span>
+                            {cert.year && <span>{cert.year}</span>}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </section>
+    );
+};
+
+const AchievementsBlock = ({ data, colors, fontStyle, baseFontSize, light }: SharedProps & { light?: boolean }) => {
+    if (!data.achievements?.achievements || data.achievements.achievements.length === 0) return null;
+    const textColor = light ? (colors.sidebarText || "#fff") : colors.bodyText;
+    const subColor = light ? "rgba(255,255,255,0.6)" : colors.subText;
+    return (
+        <section>
+            <Heading fieldKey="achievements" icon={Trophy} colors={colors} data={data} light={light}>Achievements</Heading>
+            <div className="space-y-4">
+                {data.achievements.achievements.map((ach, i) => (
+                    <div key={i} className="relative pl-4 border-l-2" style={{ borderColor: light ? "rgba(255,255,255,0.15)" : colors.accentColor }}>
+                        <Field data={data} fontStyle={fontStyle} baseFontSize={baseFontSize} value={ach.title} fieldKey={`ach_title_${i}`} defaults={{ size: 11, weight: "800", color: textColor }} className="block uppercase leading-tight" />
+                        <Field data={data} fontStyle={fontStyle} baseFontSize={baseFontSize} value={ach.description} fieldKey={`ach_desc_${i}`} defaults={{ size: 9, color: textColor }} as="p" className="opacity-80 mt-1 leading-relaxed" />
+                    </div>
+                ))}
+            </div>
+        </section>
+    );
+};
+
 const AttachmentsBlock = ({ data, colors, light }: { data: FullResumeData; colors: TemplateColors; light?: boolean }) => {
     if (!data.attachments || data.attachments.length === 0) return null;
     return (
@@ -218,6 +259,8 @@ const ClassicLayout = ({ data, aiContent, colors, fontStyle, baseFontSize }: Sha
                 <div className="col-span-4 space-y-8">
                     <SkillsBlock data={data} aiContent={aiContent} colors={colors} fontStyle={fontStyle} baseFontSize={baseFontSize} />
                     <EducationBlock data={data} aiContent={aiContent} colors={colors} fontStyle={fontStyle} baseFontSize={baseFontSize} />
+                    <CertificationsBlock data={data} aiContent={aiContent} colors={colors} fontStyle={fontStyle} baseFontSize={baseFontSize} />
+                    <AchievementsBlock data={data} aiContent={aiContent} colors={colors} fontStyle={fontStyle} baseFontSize={baseFontSize} />
                     <AttachmentsBlock data={data} colors={colors} />
                 </div>
             </div>
@@ -246,6 +289,8 @@ const SidebarLeftLayout = ({ data, aiContent, colors, fontStyle, baseFontSize }:
             </div>
             <SkillsBlock data={data} aiContent={aiContent} colors={colors} fontStyle={fontStyle} baseFontSize={baseFontSize} light />
             <EducationBlock data={data} aiContent={aiContent} colors={colors} fontStyle={fontStyle} baseFontSize={baseFontSize} light />
+            <CertificationsBlock data={data} aiContent={aiContent} colors={colors} fontStyle={fontStyle} baseFontSize={baseFontSize} light />
+            <AchievementsBlock data={data} aiContent={aiContent} colors={colors} fontStyle={fontStyle} baseFontSize={baseFontSize} light />
             <AttachmentsBlock data={data} colors={colors} light />
         </div>
         {/* Main */}
@@ -270,6 +315,8 @@ const CompactLayout = ({ data, aiContent, colors, fontStyle, baseFontSize }: Sha
             <SkillsBlock data={data} aiContent={aiContent} colors={colors} fontStyle={fontStyle} baseFontSize={baseFontSize} />
             <ExperienceBlock data={data} aiContent={aiContent} colors={colors} fontStyle={fontStyle} baseFontSize={baseFontSize} />
             <EducationBlock data={data} aiContent={aiContent} colors={colors} fontStyle={fontStyle} baseFontSize={baseFontSize} />
+            <CertificationsBlock data={data} aiContent={aiContent} colors={colors} fontStyle={fontStyle} baseFontSize={baseFontSize} />
+            <AchievementsBlock data={data} aiContent={aiContent} colors={colors} fontStyle={fontStyle} baseFontSize={baseFontSize} />
             <ProjectsBlock data={data} aiContent={aiContent} colors={colors} fontStyle={fontStyle} baseFontSize={baseFontSize} />
             <AttachmentsBlock data={data} colors={colors} />
         </div>
@@ -293,6 +340,8 @@ const ModernSplitLayout = ({ data, aiContent, colors, fontStyle, baseFontSize }:
                 <div className="space-y-8">
                     <SkillsBlock data={data} aiContent={aiContent} colors={colors} fontStyle={fontStyle} baseFontSize={baseFontSize} />
                     <EducationBlock data={data} aiContent={aiContent} colors={colors} fontStyle={fontStyle} baseFontSize={baseFontSize} />
+                    <CertificationsBlock data={data} aiContent={aiContent} colors={colors} fontStyle={fontStyle} baseFontSize={baseFontSize} />
+                    <AchievementsBlock data={data} aiContent={aiContent} colors={colors} fontStyle={fontStyle} baseFontSize={baseFontSize} />
                     <ProjectsBlock data={data} aiContent={aiContent} colors={colors} fontStyle={fontStyle} baseFontSize={baseFontSize} />
                     <AttachmentsBlock data={data} colors={colors} />
                 </div>
@@ -323,6 +372,8 @@ const ElegantBorderLayout = ({ data, aiContent, colors, fontStyle, baseFontSize 
                 <div className="col-span-4 space-y-8 border-l-2 pl-8" style={{ borderColor: colors.accentColor }}>
                     <SkillsBlock data={data} aiContent={aiContent} colors={colors} fontStyle={fontStyle} baseFontSize={baseFontSize} />
                     <EducationBlock data={data} aiContent={aiContent} colors={colors} fontStyle={fontStyle} baseFontSize={baseFontSize} />
+                    <CertificationsBlock data={data} aiContent={aiContent} colors={colors} fontStyle={fontStyle} baseFontSize={baseFontSize} />
+                    <AchievementsBlock data={data} aiContent={aiContent} colors={colors} fontStyle={fontStyle} baseFontSize={baseFontSize} />
                     <AttachmentsBlock data={data} colors={colors} />
                 </div>
             </div>

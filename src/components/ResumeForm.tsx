@@ -4,6 +4,7 @@ import { useForm, useFieldArray, useWatch, FormProvider, Control, UseFormSetValu
 import { zodResolver } from "@hookform/resolvers/zod";
 import { fullResumeSchema, FullResumeData } from "@/lib/schemas";
 import { RESUME_TEMPLATES } from "@/lib/templates";
+import { TemplatePicker } from "./TemplatePicker";
 import { ResumeTemplate } from "./ResumeTemplate";
 import { useState, useRef, useEffect, memo } from "react";
 import {
@@ -24,6 +25,8 @@ import {
   ArrowLeft,
   ChevronDown,
   HelpCircle,
+  Award,
+  Trophy,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
@@ -202,38 +205,6 @@ const FieldStylingControls = ({ control, setValue, fieldKey, defaultSize = 12 }:
 const labelClass = (error?: boolean) =>
   `block text-[10px] font-black tracking-widest uppercase mb-1.5 ${error ? "text-red-400" : "text-premium-gold"}`;
 
-const TemplatePicker = memo(function TemplatePicker({ selectedTemplate, setSelectedTemplate }: { selectedTemplate: string, setSelectedTemplate: (id: string) => void }) {
-  return (
-    <div className="grid grid-cols-4 sm:grid-cols-7 gap-3 mt-4">
-      {RESUME_TEMPLATES.map((t) => (
-        <button
-          key={t.id}
-          type="button"
-          title={t.description}
-          onClick={() => setSelectedTemplate(t.id)}
-          className={`group relative aspect-[3/4] rounded-lg overflow-hidden border-2 transition-all duration-300 focus:outline-none ${selectedTemplate === t.id ? "border-premium-gold scale-105 shadow-[0_0_20px_rgba(212,175,55,0.4)] z-10" : "border-white/5 grayscale opacity-50 hover:opacity-100 hover:grayscale-0"}`}
-        >
-          <div className="absolute inset-0" style={{ background: t.previewGradient }} />
-          <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors" />
-          <div className="absolute inset-2 border border-white/10 rounded sm opacity-40 group-hover:opacity-100 transition-opacity">
-            <div className="h-2 w-full bg-white/20 mb-1" />
-            <div className="h-1 w-2/3 bg-white/10 mb-1" />
-            <div className="h-4 w-full bg-white/5" />
-          </div>
-          <div className="absolute bottom-0 left-0 right-0 p-1.5 bg-black/80 backdrop-blur-sm">
-            <p className="text-[8px] font-bold text-white truncate text-center">{t.name}</p>
-          </div>
-          {selectedTemplate === t.id && (
-            <motion.div layoutId="active-check" className="absolute top-1 right-1 bg-premium-gold text-black rounded-full p-0.5">
-              <Sparkles className="w-2.5 h-2.5" />
-            </motion.div>
-          )}
-        </button>
-      ))}
-    </div>
-  );
-});
-TemplatePicker.displayName = "TemplatePicker";
 
 interface ResumePreviewProps {
   control: Control<FullResumeData>;
@@ -315,6 +286,8 @@ export function ResumeForm() {
       experience: { experiences: [{ company: "", role: "", duration: "", description: "" }] },
       education: { education: [{ school: "", degree: "", year: "" }] },
       projects: { projects: [] },
+      certifications: { certifications: [] },
+      achievements: { achievements: [] },
       fieldColors: {},
       fieldFontSizes: {},
       fieldFontTypes: {},
@@ -327,6 +300,8 @@ export function ResumeForm() {
   const { fields: expFields, append: appendExp, remove: removeExp } = useFieldArray({ control, name: "experience.experiences" });
   const { fields: eduFields, append: appendEdu, remove: removeEdu } = useFieldArray({ control, name: "education.education" });
   const { fields: projFields, append: appendProj, remove: removeProj } = useFieldArray({ control, name: "projects.projects" });
+  const { fields: certFields, append: appendCert, remove: removeCert } = useFieldArray({ control, name: "certifications.certifications" as any });
+  const { fields: achFields, append: appendAch, remove: removeAch } = useFieldArray({ control, name: "achievements.achievements" as any });
   const { fields: attachFields, remove: removeAttach } = useFieldArray({ control, name: "attachments" });
 
   const onGenerate = async (data: FullResumeData) => {
@@ -451,8 +426,8 @@ export function ResumeForm() {
                   <span className="text-[10px] font-bold text-premium-gold/40 uppercase tracking-widest">{RESUME_TEMPLATES.length} Premium Templates</span>
                 </div>
                 <TemplatePicker
-                  selectedTemplate={selectedTemplate}
-                  setSelectedTemplate={setSelectedTemplate}
+                  selectedId={selectedTemplate}
+                  onSelect={(id) => setSelectedTemplate(id)}
                 />
               </div>
 
@@ -649,6 +624,77 @@ export function ResumeForm() {
                     ))}
                     <button type="button" onClick={() => appendProj({ name: "", description: "", link: "" })} className="w-full py-3 border border-dashed border-premium-gold/20 rounded-xl text-premium-gold/60 text-xs font-bold uppercase tracking-wider hover:bg-premium-gold/5 transition-colors">
                       <Plus className="w-4 h-4 inline-block mr-2" /> Add Project
+                    </button>
+                  </div>
+                </FormSection>
+
+                <FormSection title="Certifications" icon={Award} defaultOpen={false} control={control} watchFields={['certifications.certifications.0.name']}>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center mb-2 px-1">
+                      <span className={labelClass()}>Section Heading Color</span>
+                      <ColorPicker fieldKey="heading_certifications" control={control} setValue={setValue} />
+                    </div>
+                    {certFields.map((field, index) => (
+                      <div key={field.id} className="p-4 border border-white/5 rounded-xl bg-white/[0.01] relative space-y-3">
+                        <button type="button" onClick={() => removeCert(index)} className="absolute top-2 right-2 text-white/20 hover:text-red-400"><Trash2 className="w-4 h-4" /></button>
+                        <div>
+                          <div className="flex justify-between items-center mb-1.5">
+                            <label className={labelClass()}>Certification Name</label>
+                            <FieldStylingControls control={control} setValue={setValue} fieldKey={`cert_name_${index}`} defaultSize={11} />
+                          </div>
+                          <input {...form.register(`certifications.certifications.${index}.name` as any)} className={inputClass()} placeholder="e.g. Google Data Analytics" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <div className="flex justify-between items-center mb-1.5">
+                              <label className={labelClass()}>Issuer</label>
+                              <FieldStylingControls control={control} setValue={setValue} fieldKey={`cert_issuer_${index}`} defaultSize={10} />
+                            </div>
+                            <input {...form.register(`certifications.certifications.${index}.issuer` as any)} className={inputClass()} placeholder="Coursera / Google" />
+                          </div>
+                          <div>
+                            <div className="flex justify-between items-center mb-1.5">
+                              <label className={labelClass()}>Year</label>
+                              <FieldStylingControls control={control} setValue={setValue} fieldKey={`cert_year_${index}`} defaultSize={10} />
+                            </div>
+                            <input {...form.register(`certifications.certifications.${index}.year` as any)} className={inputClass()} placeholder="2023" />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    <button type="button" onClick={() => appendCert({ name: "", issuer: "", year: "" })} className="w-full py-3 border border-dashed border-premium-gold/20 rounded-xl text-premium-gold/60 text-xs font-bold uppercase tracking-wider hover:bg-premium-gold/5 transition-colors">
+                      <Plus className="w-4 h-4 inline-block mr-2" /> Add Certification
+                    </button>
+                  </div>
+                </FormSection>
+
+                <FormSection title="Achievements" icon={Trophy} defaultOpen={false} control={control} watchFields={['achievements.achievements.0.title']}>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center mb-2 px-1">
+                      <span className={labelClass()}>Section Heading Color</span>
+                      <ColorPicker fieldKey="heading_achievements" control={control} setValue={setValue} />
+                    </div>
+                    {achFields.map((field, index) => (
+                      <div key={field.id} className="p-4 border border-white/5 rounded-xl bg-white/[0.01] relative space-y-3">
+                        <button type="button" onClick={() => removeAch(index)} className="absolute top-2 right-2 text-white/20 hover:text-red-400"><Trash2 className="w-4 h-4" /></button>
+                        <div>
+                          <div className="flex justify-between items-center mb-1.5">
+                            <label className={labelClass()}>Achievement Title</label>
+                            <FieldStylingControls control={control} setValue={setValue} fieldKey={`ach_title_${index}`} defaultSize={11} />
+                          </div>
+                          <input {...form.register(`achievements.achievements.${index}.title` as any)} className={inputClass()} placeholder="e.g. Employee of the Month" />
+                        </div>
+                        <div>
+                          <div className="flex justify-between items-center mb-1.5">
+                            <label className={labelClass()}>Description</label>
+                            <FieldStylingControls control={control} setValue={setValue} fieldKey={`ach_desc_${index}`} defaultSize={10} />
+                          </div>
+                          <textarea {...form.register(`achievements.achievements.${index}.description` as any)} className={`${inputClass()} min-h-[60px]`} placeholder="Briefly describe the impact..." />
+                        </div>
+                      </div>
+                    ))}
+                    <button type="button" onClick={() => appendAch({ title: "", description: "" })} className="w-full py-3 border border-dashed border-premium-gold/20 rounded-xl text-premium-gold/60 text-xs font-bold uppercase tracking-wider hover:bg-premium-gold/5 transition-colors">
+                      <Plus className="w-4 h-4 inline-block mr-2" /> Add Achievement
                     </button>
                   </div>
                 </FormSection>

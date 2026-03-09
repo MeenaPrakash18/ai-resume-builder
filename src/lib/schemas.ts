@@ -42,11 +42,32 @@ export const projectSchema = z.object({
     ).optional(),
 });
 
+export const certificationSchema = z.object({
+    certifications: z.array(
+        z.object({
+            name: z.string().min(1, "Certification name is required."),
+            issuer: z.string().min(1, "Issuer is required."),
+            year: z.string().optional(),
+        })
+    ).optional(),
+});
+
+export const achievementSchema = z.object({
+    achievements: z.array(
+        z.object({
+            title: z.string().min(1, "Achievement title is required."),
+            description: z.string().min(5, "Description is required."),
+        })
+    ).optional(),
+});
+
 export const fullResumeSchema = z.object({
     personalInfo: personalInfoSchema,
     experience: experienceSchema,
     education: educationSchema,
     projects: projectSchema,
+    certifications: certificationSchema.optional(),
+    achievements: achievementSchema.optional(),
     fieldColors: z.record(z.string(), z.string()).optional().default({}),
     fieldFontSizes: z.record(z.string(), z.number()).optional().default({}),
     fieldFontTypes: z.record(z.string(), z.string()).optional().default({}),
